@@ -46,6 +46,12 @@ import javax.annotation.Nullable;
 // Non-final for testing via mock library.
 public class SettingsValues {
     private static final String TAG = SettingsValues.class.getSimpleName();
+
+    /**
+     * IchthysOS: no voice input / microphone key on the keyboard. See
+     * {@link #needsToShowVoiceInputKey}. Flip to false to restore it.
+     */
+    private static final boolean VOICE_INPUT_KEY_DISABLED = true;
     // "floatMaxValue" and "floatNegativeInfinity" are special marker strings for
     // Float.NEGATIVE_INFINITE and Float.MAX_VALUE. Currently used for auto-correction settings.
     private static final String FLOAT_MAX_VALUE_MARKER_STRING = "floatMaxValue";
@@ -354,6 +360,19 @@ public class SettingsValues {
 
     private static boolean needsToShowVoiceInputKey(final SharedPreferences prefs,
             final Resources res) {
+        // IchthysOS: the user wants no voice-search / microphone affordance anywhere in the OS,
+        // and LatinIME is the keyboard this ROM ships. This is the single value that decides
+        // whether the keyboard draws its microphone (shortcut-IME) key, so returning false
+        // removes it outright - including for a profile whose pref_voice_input_key was already
+        // switched on. The preference itself is hidden via
+        // config_enable_show_voice_key_option=false. Nothing else about the keyboard changes.
+        //
+        // NOTE: this only covers LatinIME. A third-party keyboard (Gboard, SwiftKey, ...) draws
+        // its own mic key from its own code and cannot be changed from the ROM - that has to be
+        // handled in the keyboard's own settings or by revoking its RECORD_AUDIO permission.
+        if (VOICE_INPUT_KEY_DISABLED) {
+            return false;
+        }
         // Migrate preference from {@link Settings#PREF_VOICE_MODE_OBSOLETE} to
         // {@link Settings#PREF_VOICE_INPUT_KEY}.
         if (prefs.contains(Settings.PREF_VOICE_MODE_OBSOLETE)) {

@@ -24,7 +24,11 @@
     <!-- Whether or not Popup on key press is enabled by default -->
     <bool name="config_default_key_preview_popup">true</bool>
     <bool name="config_default_sound_enabled">false</bool>
-    <bool name="config_enable_show_voice_key_option">true</bool>
+    <!-- IchthysOS: no voice search / microphone affordances in this ROM. false hides the
+         "Voice input key" preference in the keyboard settings; SettingsValues
+         .needsToShowVoiceInputKey() also hard-returns false so the mic key itself never
+         renders, even for a profile that had the pref switched on before. -->
+    <bool name="config_enable_show_voice_key_option">false</bool>
     <bool name="config_key_selection_by_dragging_finger">true</bool>
     <!-- Showing more keys keyboard, just above the touched point if true, aligned to the key if
          false -->
